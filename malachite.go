@@ -11,11 +11,11 @@ import (
 
 	"github.com/bwmarrin/discordgo"
 	"gopkg.in/yaml.v2"
-	//"github.com/bwmarrin/discordgo"
 )
 
 var prefix = "./"
 
+// Creds struct to read in the creds yaml file
 type Creds struct {
 	AppToken          string
 	AppID             string

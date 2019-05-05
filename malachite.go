@@ -26,7 +26,6 @@ type Creds struct {
 }
 
 func main() {
-	// configFilePath := "/mnt/c/Users/Mitch/Documents/malachite.yaml"
 	configFilePath := os.Getenv("CONFIG_FILE")
 	creds := Creds{}
 	err := fillCreds(configFilePath, &creds)

@@ -10,6 +10,7 @@ import (
 	"syscall"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/cull-methi/malachite/cmd/messagedelete"
 	"gopkg.in/yaml.v2"
 )
 
@@ -28,7 +29,7 @@ type Creds struct {
 func main() {
 	configFilePath := os.Getenv("CONFIG_FILE")
 	creds := Creds{}
-	err := fillCreds(configFilePath, &creds)
+	err := fillCredsFromConfigFile(configFilePath, &creds)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -38,7 +39,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	dg.AddHandler(messageCreate)
+	dg.AddHandler(messageCreateHandler)
 
 	err = dg.Open()
 	if err != nil {
@@ -56,7 +57,7 @@ func main() {
 	dg.Close()
 }
 
-func fillCreds(configFilePath string, creds *Creds) (err error) {
+func fillCredsFromConfigFile(configFilePath string, creds *Creds) (err error) {
 	file, err := os.Open(configFilePath)
 	if err != nil {
 		return err
@@ -76,7 +77,7 @@ func fillCreds(configFilePath string, creds *Creds) (err error) {
 
 }
 
-func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
+func messageCreateHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	if m.Author.ID == s.State.User.ID {
 		return
@@ -91,15 +92,16 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	fmt.Println(content)
 	// If the message is "ping" reply with "Pong!"
 	if content == "ping" {
-		s.ChannelMessageSend(m.ChannelID, "Pong!")
-	}
-
-	// If the message is "pong" reply with "Ping!"
-	if content == "pong" {
-		s.ChannelMessageSend(m.ChannelID, "Ping!")
+		s.ChannelMessageSend(m.ChannelID, "Yeah, yeah, I'm here bruh")
 	}
 
 	if content == "test" {
-		s.ChannelMessageSend(m.ChannelID, "here's your test fuckwad")
+		s.ChannelMessageSend(m.ChannelID, "Here's your test, fuckwad")
 	}
+
+	err := error{}
+	if strings.HasPrefix(content, "delete") {
+		err = messagedelete.Entrypoint(s, m)
+	}
+
 }
